@@ -47,6 +47,11 @@ class CoffeeMachineGateway extends Gateway implements CoffeTypesInterface
 
     public function getStatus()
     {
+        return $this->status;
+    }
+
+    public function getStatusMessage($status)
+    {
         /** return proper message */
         switch ($this->status) {
             case '0':
@@ -58,7 +63,12 @@ class CoffeeMachineGateway extends Gateway implements CoffeTypesInterface
         }
     }
 
-    public function setStatus($data)
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
+    public function changeStatus($data)
     {
         $userTurnValue = $data['turn'];
 

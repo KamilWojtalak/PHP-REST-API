@@ -8,5 +8,5 @@ interface ControllerInterface
         $gateway
     );
 
-    public function processRequest(string $method = 'GET', string $resource, $urlAfterResource): void;
+    public function processRequest(string $resource, $urlAfterResource, string $method = 'GET'): void;
 }

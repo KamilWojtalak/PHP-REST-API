@@ -34,7 +34,6 @@ set_exception_handler('App\Src\Exceptions\ExceptionHandler::handle_exception');
 /** Utilities used mainly in this file */
 $api = new CoffeeMachineApi($config);
 
-
 /** Get URL */
 $url = $api->getFormatedUrl($_SERVER['REQUEST_URI']);
 /** Get URL method */
@@ -56,33 +55,4 @@ $coffeeMachineGateway = new CoffeeMachineGateway($dbc);
 $coffeeMachineController = new CoffeeMachineController($coffeeMachineGateway);
 
 /** Handle task request */
-$coffeeMachineController->processRequest($urlMethod, $restResource, $urlAfterResource);
-
-/**
- * - Moc kawy ustawia się osobno
- * - Powinna być weryfikacja czy pojemnik z kawą jest pusty, pojemnik na fusy jest pusty i czy jest woda.
- */
-
-/**
- * Do controllera idzie resource
-* i to co jest jeszcze za resourcem jako array
-* interfacey pododawaj
-* i abstract classes daj
-*/
-
-/**
- * zmiany w db
- * będzie tylko jedna kawa
- * dla content bedzie
- * kawa
- * mleko
- * woda
- * 
- * moc kawy tez będzie ustawiana przez url bo musi być zpaamiętywany
- * 
- * zrób funckej która sprawdza czy coffe jest pomiedzy 0-100
- * a coffee_power pomiędzy 1 a 2 i tutaj będzie float
- * i to będziesz ustawiał na route /api/coffee-machine/coffee/power
- * 
- * no i kawę będzie robić
- */
+$coffeeMachineController->processRequest($restResource, $urlAfterResource, $urlMethod);

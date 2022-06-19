@@ -14,7 +14,7 @@ class CoffeeMachineController extends Controller
         parent::__construct($gateway);
     }
 
-    public function processRequest(string $method = 'GET', string $resource, $urlAfterResource): void
+    public function processRequest(string $resource, $urlAfterResource, string $method = 'GET'): void
     {
         /** Get coffee machine status from the db */
         $this->_gateway->getStatusDb();
@@ -23,7 +23,8 @@ class CoffeeMachineController extends Controller
             case 'status':
                 switch ($method) {
                     case 'GET':
-                        $feedbackMessage = $this->_gateway->getStatus();
+                        $status = $this->_gateway->getStatus();
+                        $feedbackMessage = $this->_gateway->getStatusMessage($status);
 
                         CustomFunctions::outputJson($feedbackMessage);
                         break;
@@ -32,7 +33,7 @@ class CoffeeMachineController extends Controller
 
                         if (!$this->_gateway->validateStatusData($input)) CustomFunctions::displayError('Allowed `turn` parameter values are in the docs. This one is not allowed.');
 
-                        $feedbackMessage = $this->_gateway->setStatus($input);
+                        $feedbackMessage = $this->_gateway->changeStatus($input);
 
                         CustomFunctions::outputJson($feedbackMessage);
                         break;
@@ -59,61 +60,52 @@ class CoffeeMachineController extends Controller
                     break;
                 case 'content':
                     $this->_gateway->getContentDb();
-                    switch ($method) {
-                        case 'GET':
-                            $feedbackMessage = $this->_gateway->getContent();
-                            CustomFunctions::outputJson($feedbackMessage);
-                            break;
-                        case 'PUT':
-                            /** get php input data */
-                            $input = CustomFunctions::getHttpInput();
+                    if ($method === 'GET') {
+                        $feedbackMessage = $this->_gateway->getContent();
+                        CustomFunctions::outputJson($feedbackMessage);
+                    } elseif ($method === 'PUT') {
+                        /** get php input data */
+                        $input = CustomFunctions::getHttpInput();
 
-                            /** validate keys and values */
-                            $this->_gateway->validateContentUpdateData($input);
+                        /** validate keys and values */
+                        $this->_gateway->validateContentUpdateData($input);
 
-                            /** update gateway and db */
-                            $feedbackMessage = $this->_gateway->updateContent($input);
+                        /** update gateway and db */
+                        $feedbackMessage = $this->_gateway->updateContent($input);
 
-                            CustomFunctions::outputJson($feedbackMessage);
-                            break;
-                        default:
-                            CustomFunctions::displayError('This method is not implemented to work with this resource.', 405, ['GET', 'PUT']);
-                            break;
+                        CustomFunctions::outputJson($feedbackMessage);
+                    } else {
+                        CustomFunctions::displayError('This method is not implemented to work with this resource.', 405, ['GET', 'PUT']);
                     }
                     break;
                 case 'coffee':
                     $this->_gateway->getContentDb();
 
-                    switch ($method) {
-                        case 'GET':
-                            $feedbackMessage = $this->_gateway->getCoffee();
+                    if ($method === 'GET') {
+                        $feedbackMessage = $this->_gateway->getCoffee();
+                        CustomFunctions::outputJson($feedbackMessage);
+                    } elseif ($method === 'POST') {
+                        /** get php input data */
+                        $input = CustomFunctions::getHttpInput();
+
+                        /** validate keys and values */
+                        $this->_gateway->validateCoffeeData($input);
+
+                        /** update gateway and db */
+                        $feedbackMessage = $this->_gateway->makeCoffee($input);
+
+                        CustomFunctions::outputJson($feedbackMessage);
+                    } elseif ($method === 'PUT') {
+                        $input = CustomFunctions::getHttpInput();
+
+                        if (isset($urlAfterResource[0]) && $urlAfterResource[0] === 'power') {
+                            $this->_gateway->validatePowerParam($input);
+                            $feedbackMessage = $this->_gateway->updatePower($input);
+
                             CustomFunctions::outputJson($feedbackMessage);
-                            break;
-                        case 'POST':
-                            /** get php input data */
-                            $input = CustomFunctions::getHttpInput();
-
-                            /** validate keys and values */
-                            $this->_gateway->validateCoffeeData($input);
-
-                            /** update gateway and db */
-                            $feedbackMessage = $this->_gateway->makeCoffee($input);
-
-                            CustomFunctions::outputJson($feedbackMessage);
-                            break;
-                        case 'PUT':
-                            $input = CustomFunctions::getHttpInput();
-
-                            if (isset($urlAfterResource[0]) && $urlAfterResource[0] === 'power') {
-                                $this->_gateway->validatePowerParam($input);
-                                $feedbackMessage = $this->_gateway->updatePower($input);
-
-                                CustomFunctions::outputJson($feedbackMessage);
-                            }
-                            break;
-                        default:
-                            CustomFunctions::displayError('This method is not implemented to work with this resource.', 405, ['GET', 'POST', 'PUT']);
-                            break;
+                        }
+                    } else {
+                        CustomFunctions::displayError('This method is not implemented to work with this resource.', 405, ['GET', 'POST', 'PUT']);
                     }
                     break;
             }

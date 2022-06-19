@@ -8,11 +8,8 @@ use App\Src\Interfaces\ApiInterface;
 
 abstract class Api implements ApiInterface
 {
-    private $_config = [];
-
-    public function __construct($config)
+    public function __construct(private $_config)
     {
-        $this->_config = $config;
     }
 
     public function getFormatedUrl($url)
@@ -38,10 +35,11 @@ abstract class Api implements ApiInterface
     /** Check whether url starts properly */
     public function doesUrlStartWell($url)
     {
-        if(!str_starts_with($url, $this->_config['URL_BEGINNING'])) CustomFunctions::displayError('Invalid URL. Read the docs first');
+        if (!str_starts_with($url, $this->_config['URL_BEGINNING'])) CustomFunctions::displayError('Invalid URL. Read the docs first');
     }
 
-    public function getUrlResource($url) {
+    public function getUrlResource($url)
+    {
         /** Make url into chunks */
         $chunks = $this->_urlToArray($url);
 
@@ -75,7 +73,8 @@ abstract class Api implements ApiInterface
         return $chunks;
     }
 
-    public function getUrlAfterResource($url) {
+    public function getUrlAfterResource($url)
+    {
         $explodeUrl = explode('/', $url);
         return array_slice($explodeUrl, 4);
     }
