@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `primesoft`
+-- Database: `testtest`
 --
 
 -- --------------------------------------------------------
@@ -82,7 +82,7 @@ CREATE TABLE `specification` (
 --
 
 INSERT INTO `specification` (`ac_power`, `manufacturer`, `water_boiler`, `steam_boiler`, `max_consumption`, `coffee_machine_id`) VALUES
-('AC 220~240V', 'PrimeSoft 😎', '1100 Watts', '700 Watts', '1100 Watts', 1);
+('AC 220~240V', 'TEST TEST 😎', '1100 Watts', '700 Watts', '1100 Watts', 1);
 
 --
 -- Indexes for dumped tables
